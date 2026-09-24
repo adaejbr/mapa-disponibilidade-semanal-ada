@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mapa de Disponibilidade Semanal</title>
+<style>
+  :root{
+    --bg1:#eef4fb;
+    --bg2:#e9eef5;
+    --card:#ffffff;
+    --line:#e2e8f0;
+    --text:#0f172a;
+    --muted:#64748b;
+    --accent:#0284c7;
+    --empty:#f8fafc;
+    --radius:14px;
+  }
+
+  *{ box-sizing:border-box; }
+
+  body{
+    margin:0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, sans-serif;
+    background: linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 100%);
+    background-attachment: fixed;
+    color: var(--text);
+    padding: 28px 16px 64px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap{ max-width: 1080px; margin: 0 auto; }
+
+  /* ---------- Cabeçalho ---------- */
+  header.top{
+    display:flex; flex-wrap:wrap; gap:14px;
+    align-items:flex-end; justify-content:space-between;
+    margin-bottom: 20px;
+  }
+  h1{ font-size:1.5rem; margin:0 0 4px; letter-spacing:-.02em; }
+  .sub{ color:var(--muted); font-size:.88rem; margin:0; }
+
+  .user-bar{
+    font-size:.88rem; color:var(--muted);
+    background:#fff; border:1px solid var(--line);
+    padding:9px 16px; border-radius:999px;
+    box-shadow:0 1px 2px rgba(15,23,42,.04);
+    display:flex; align-items:center; gap:2px;
+  }
+  .user-bar strong{ color:var(--text); margin-left:4px; }
+
+  .link{
+    background:none; border:0; color:var(--accent);
+    font:inherit; cursor:pointer; padding:0 0 0 8px;
+    text-decoration:underline; text-underline-offset:2px;
+  }
+  .link:hover{ color:#0369a1; }
+
+  /* ---------- Cards ---------- */
+  .card{
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 18px;
+    box-shadow: 0 4px 18px rgba(15,23,42,.05);
+  }
+
+  .toolbar{
+    display:flex; flex-wrap:wrap; gap:14px;
+    align-items:center; justify-content:space-between;
+    margin-bottom: 14px;
+  }
+
+  /* ---------- Legenda ---------- */
+  .legend{ display:flex; align-items:center; gap:10px; font-size:.8rem; color:var(--muted); }
+  .legend-bar{
+    width:170px; height:10px; border-radius:999px;
+    background: linear-gradient(90deg,
+      hsl(142 40% 93%) 0%,
+      hsl(142 55% 78%) 35%,
+      hsl(142 70% 57%) 70%,
+      hsl(142 82% 37%) 100%);
+    border:1px solid rgba(15,23,42,.06);
+  }
+
+  /* ---------- Botões ---------- */
+  .btn{
+    font:inherit; font-size:.84rem; font-weight:600;
+    padding:9px 15px; border-radius:10px;
+    border:1px solid var(--line); background:#fff; color:var(--text);
+    cursor:pointer; transition:.15s;
+  }
+  .btn:hover{ background:#f1f5f9; }
+  .btn.primary{ background:var(--accent); border-color:var(--accent); color:#fff; }
+  .btn.primary:hover{ background:#0369a1; border-color:#0369a1; }
+  .btn.danger{ color:#b91c1c; border-color:#fecaca; }
+  .btn.danger:hover{ background:#fef2f2; }
+  .actions{ display:flex; gap:8px; flex-wrap:wrap; }
+
+  /* ---------- Grade do calendário ---------- */
+  .grid-scroll{ overflow-x:auto; padding-bottom:6px; }
+
+  .calendar{
+    display:grid;
+    grid-template-columns: 58px repeat(7, minmax(0, 1fr));
+    gap: 4px;
+    min-width: 660px;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: pan-y; /* permite rolar a página no celular */
+  }
+
+  .corner{ }
+
+  .day-head{
+    text-align:center;
+    font-size:.74rem;
+    font-weight:700;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--muted);
+    padding: 6px 0 8px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 2px;
+  }
+
+  .time{
+    height:34px;
+    display:flex; align-items:center; justify-content:flex-end;
+    padding-right:8px;
+    font-size:.7rem;
+    font-variant-numeric: tabular-nums;
+    color:var(--muted);
+  }
+
+  .cell{
+    height:34px;
+    border-radius:7px;
+    background: var(--empty);
+    border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center;
+    font-size:.7rem; font-weight:700;
+    color:#14532d;
+    cursor:pointer;
+    position:relative;
+    transition: background .12s ease, box-shadow .12s ease;
+    touch-action: none;
+  }
+  .cell:hover{
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+  }
+  /* marcação do usuário atual */
+  .cell.mine{
+    box-shadow: inset 0 0 0 2px var(--accent);
+  }
+
+  /* ---------- Estatísticas ---------- */
+  .stats{
+    margin-top: 18px;
+    display:grid;
+    grid-template-columns: 220px 1fr;
+    gap: 24px;
+  }
+  @media (max-width: 640px){
+    .stats{ grid-template-columns: 1fr; gap:16px; }
+  }
+
+  .stat-row{ display:flex; gap:24px; }
+  .stat{ display:flex; flex-direction:column; }
+  .stat span{ font-size:1.9rem; font-weight:800; line-height:1; letter-spacing:-.03em; }
+  .stat small{ color:var(--muted); font-size:.76rem; margin-top:5px; }
+
+  .best h3{
+    margin:0 0 10px; font-size:.78rem; text-transform:uppercase;
+    letter-spacing:.06em; color:var(--muted);
+  }
+  .best ul{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:6px; }
+  .best li{
+    display:flex; align-items:center; justify-content:space-between;
+    font-size:.86rem; padding:7px 12px;
+    background:#f8fafc; border:1px solid var(--line); border-radius:9px;
+  }
+  .best li.muted{ color:var(--muted); justify-content:flex-start; }
+  .pill{
+    font-size:.74rem; font-weight:700;
+    background:#dcfce7; color:#166534;
+    padding:3px 9px; border-radius:999px;
+  }
+
+  /* ---------- Modal ---------- */
+  .modal{
+    position:fixed; inset:0; z-index:50;
+    background: rgba(15,23,42,.5);
+    backdrop-filter: blur(3px);
+    display:flex; align-items:center; justify-content:center;
+    padding: 20px;
+  }
+  .modal[hidden]{ display:none; }
+
+  .modal-card{
+    background:#fff; border-radius:18px;
+    padding: 28px;
+    width: 100%; max-width: 400px;
+    box-shadow: 0 24px 60px rgba(15,23,42,.28);
+    animation: pop .18s ease-out;
+  }
+  @keyframes pop{
+    from{ transform: scale(.96); opacity:0; }
+    to{ transform: scale(1); opacity:1; }
+  }
+  .modal-card h2{ margin:0 0 6px; font-size:1.2rem; letter-spacing:-.02em; }
+  .modal-card p{ margin:0 0 18px; color:var(--muted); font-size:.87rem; }
+
+  .modal-card input{
+    width:100%; font:inherit; font-size:.95rem;
+    padding: 12px 14px; border-radius:10px;
+    border:1px solid var(--line); background:#f8fafc;
+    outline:none; transition:.15s;
+  }
+  .modal-card input:focus{
+    border-color:var(--accent); background:#fff;
+    box-shadow: 0 0 0 3px rgba(2,132,199,.15);
+  }
+  .modal-card .btn{ width:100%; margin-top:12px; padding:12px; }
+
+  .chips{ display:flex; flex-wrap:wrap; gap:7px; }
+  .chip{
+    font:inherit; font-size:.8rem; font-weight:600;
+    padding:6px 13px; border-radius:999px;
+    border:1px solid var(--line); background:#fff;
+    cursor:pointer; transition:.15s;
+  }
+  .chip:hover{ background:#e0f2fe; border-color:#7dd3fc; color:#0369a1; }
+
+  .muted{ color:var(--muted); }
+  .small{ font-size:.78rem; margin:18px 0 8px; }
+  .hint{ font-size:.78rem; color:var(--muted); margin-top:12px; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="top">
+    <div>
+      <h1>Disponibilidade Semanal</h1>
+      <p class="sub">Clique e arraste para marcar os horários em que você pode. Quanto mais verde, mais gente disponível.</p>
+    </div>
+    <div class="user-bar" id="userBar"></div>
+  </header>
+
+  <section class="card">
+    <div class="toolbar">
+      <div class="legend">
+        <span>0</span>
+        <div class="legend-bar"></div>
+        <span id="legendMax">todos</span>
+      </div>
+      <div class="actions">
+        <button class="btn" id="btnClearMine">Limpar minhas seleções</button>
+      </div>
+    </div>
+
+    <div class="grid-scroll">
+      <div class="calendar" id="grid"></div>
+    </div>
+
+    <p class="hint">💡 Dica: clique e arraste para marcar vários horários de uma vez. Clicar num horário já marcado desmarca.</p>
+  </section>
+
+  <section class="card stats">
+    <div class="stat-row">
+      <div class="stat">
+        <span id="statPeople">0</span>
+        <small>participantes</small>
+      </div>
+      <div class="stat">
+        <span id="statSlots">0</span>
+        <small>horários marcados</small>
+      </div>
+    </div>
+
+    <div class="best">
+      <h3>Melhores horários</h3>
+      <ul id="bestList"></ul>
+    </div>
+  </section>
+
+</div>
+
+<!-- Modal de identificação -->
+<div class="modal" id="modal" hidden>
+  <div class="modal-card">
+    <h2>Quem é você?</h2>
+    <p>Digite seu nome para marcar sua disponibilidade na semana.</p>
+    <input id="nameInput" type="text" maxlength="24" placeholder="Seu nome" autocomplete="off">
+    <button class="btn primary" id="btnEnter">Começar</button>
+    <div id="existingUsers"></div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   CONFIGURAÇÃO
+   ========================================================= */
+const DAYS       = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+const START_HOUR = 7;    // primeira hora exibida
+const END_HOUR   = 22;   // última hora (não inclusa)
+const STORAGE_KEY = 'agenda-disponibilidade-v1';
+const USER_KEY    = 'agenda-disponibilidade-user';
+
+/* =========================================================
+   ESTADO
+   data.users = { "Ana": Set("0-9", "0-10", ...) }
+   chave do slot = `${diaIndex}-${hora}`
+   ========================================================= */
+let data = { users: {} };
+let currentUser = null;
+
+let dragging = false;
+let dragMode = true;        // true = marcando, false = desmarcando
+let visited  = new Set();   // evita reprocessar a mesma célula no arraste
+
+const grid = document.getElementById('grid');
+
+/* =========================================================
+   PERSISTÊNCIA
+   ========================================================= */
+function loadData() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const parsed = JSON.parse(raw);
+    const users = {};
+    for (const [name, arr] of Object.entries(parsed.users || {})) {
+      users[name] = new Set(Array.isArray(arr) ? arr : []);
+    }
+    data = { users };
+  } catch (e) {
+    console.warn('Não foi possível carregar os dados salvos.', e);
+  }
+}
+
+function saveData() {
+  const users = {};
+  for (const [name, set] of Object.entries(data.users)) {
+    users[name] = [...set];
+  }
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ users }));
+  } catch (e) {
+    console.warn('Não foi possível salvar.', e);
+  }
+}
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+function mySet() {
+  if (!currentUser) return new Set();
+  if (!data.users[currentUser]) data.users[currentUser] = new Set();
+  return data.users[currentUser];
+}
+
+function slotLabel(key) {
+  const [d, h] = key.split('-').map(Number);
+  return `${DAYS[d]} ${String(h).padStart(2, '0')}:00`;
+}
+
+/* Interpola a cor do mapa de calor: 0 → quase branco, 1 → verde vivo */
+function heatColor(ratio) {
+  const l = 93 - 56 * ratio;   // 93% → 37%
+  const s = 40 + 42 * ratio;   // 40% → 82%
+  return `hsl(142 ${s.toFixed(1)}% ${l.toFixed(1)}%)`;
+}
+
+/* =========================================================
+   CONSTRUÇÃO DA GRADE
+   ========================================================= */
+function buildGrid() {
+  grid.innerHTML = '';
+
+  // canto superior esquerdo (vazio)
+  const corner = document.createElement('div');
+  corner.className = 'corner';
+  grid.appendChild(corner);
+
+  // cabeçalho dos dias
+  DAYS.forEach(day => {
+    const el = document.createElement('div');
+    el.className = 'day-head';
+    el.textContent = day;
+    grid.appendChild(el);
+  });
+
+  // linhas de horários
+  for (let h = START_HOUR; h < END_HOUR; h++) {
+    const time = document.createElement('div');
+    time.className = 'time';
+    time.textContent = `${String(h).padStart(2, '0')}:00`;
+    grid.appendChild(time);
+
+    for (let d = 0; d < 7; d++) {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.dataset.key = `${d}-${h}`;
+      cell.draggable = false;
+
+      const num = document.createElement('span');
+      num.className = 'num';
+      cell.appendChild(num);
+
+      grid.appendChild(cell);
+    }
+  }
+}
+
+/* =========================================================
+   RENDERIZAÇÃO (mapa de calor + estatísticas)
+   ========================================================= */
+function render() {
+  // 1. Conta quantas pessoas marcaram cada slot
+  const totals = new Map();
+  let people = 0;
+
+  for (const set of Object.values(data.users)) {
+    if (set.size === 0) continue;   // quem não marcou nada não conta
+    people++;
+    for (const key of set) {
+      totals.set(key, (totals.get(key) || 0) + 1);
+    }
+  }
+
+  const denom = Math.max(1, people);
+  const mine  = currentUser ? (data.users[currentUser] || new Set()) : new Set();
+
+  document.getElementById('legendMax').textContent =
+    people === 0 ? 'todos' : `${people} ${people === 1 ? 'pessoa' : 'pessoas'}`;
+
+  // 2. Pinta as células
+  grid.querySelectorAll('.cell').forEach(cell => {
+    const key   = cell.dataset.key;
+    const count = totals.get(key) || 0;
+
+    if (count === 0) {
+      cell.style.background = '';
+      cell.style.color = '';
+      cell.firstElementChild.textContent = '';
+    } else {
+      const ratio = count / denom;
+      cell.style.background = heatColor(ratio);
+      cell.style.color = ratio > 0.7 ? '#ffffff' : '#14532d';
+      cell.firstElementChild.textContent = count;
+    }
+
+    cell.classList.toggle('mine', mine.has(key));
+  });
+
+  // 3. Estatísticas
+  document.getElementById('statPeople').textContent = people;
+  document.getElementById('statSlots').textContent  = totals.size;
+
+  const best = [...totals.entries()]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .slice(0, 5);
+
+  const ul = document.getElementById('bestList');
+  ul.innerHTML = '';
+
+  if (best.length === 0) {
+    const li = document.createElement('li');
+    li.className = 'muted';
+    li.textContent = 'Nenhum horário marcado ainda.';
+    ul.appendChild(li);
+  } else {
+    best.forEach(([key, count]) => {
+      const li = document.createElement('li');
+
+      const label = document.createElement('span');
+      label.textContent = slotLabel(key);
+
+      const pill = document.createElement('span');
+      pill.className = 'pill';
+      pill.textContent = `${count} ${count === 1 ? 'pessoa' : 'pessoas'}`;
+
+      li.append(label, pill);
+      ul.appendChild(li);
+    });
+  }
+}
+
+/* =========================================================
+   SELEÇÃO POR ARRASTE (pointer events: mouse + toque)
+   ========================================================= */
+function applyCell(key) {
+  if (visited.has(key)) return;
+  visited.add(key);
+
+  const set = mySet();
+  if (dragMode) set.add(key);
+  else          set.delete(key);
+
+  render();
+}
+
+grid.addEventListener('pointerdown', e => {
+  const cell = e.target.closest('.cell');
+  if (!cell) return;
+
+  if (!currentUser) {
+    openModal();
+    return;
+  }
+
+  e.preventDefault();
+  try { grid.setPointerCapture(e.pointerId); } catch (_) {}
+
+  dragging = true;
+  visited.clear();
+
+  const key = cell.dataset.key;
+  dragMode = !mySet().has(key);   // se já estava marcado, o arraste desmarca
+  applyCell(key);
+});
+
+grid.addEventListener('pointermove', e => {
+  if (!dragging) return;
+
+  const el = document.elementFromPoint(e.clientX, e.clientY);
+  const cell = el && el.closest ? el.closest('.cell') : null;
+  if (!cell || !grid.contains(cell)) return;
+
+  applyCell(cell.dataset.key);
+});
+
+function endDrag() {
+  if (!dragging) return;
+  dragging = false;
+  visited.clear();
+  saveData();
+  render();
+}
+
+grid.addEventListener('pointerup', endDrag);
+grid.addEventListener('pointercancel', endDrag);
+window.addEventListener('pointerup', endDrag);
+
+/* =========================================================
+   USUÁRIO / MODAL
+   ========================================================= */
+const modal      = document.getElementById('modal');
+const nameInput  = document.getElementById('nameInput');
+const btnEnter   = document.getElementById('btnEnter');
+
+function openModal() {
+  renderExistingUsers();
+  modal.hidden = false;
+  nameInput.value = '';
+  setTimeout(() => nameInput.focus(), 50);
+}
+
+function closeModal() {
+  modal.hidden = true;
+}
+
+function login(name) {
+  name = (name || '').trim();
+  if (!name) {
+    nameInput.focus();
+    return;
+  }
+
+  if (!data.users[name]) data.users[name] = new Set();
+
+  currentUser = name;
+  try { localStorage.setItem(USER_KEY, name); } catch (_) {}
+
+  saveData();
+  closeModal();
+  updateUserBar();
+  render();
+}
+
+function renderExistingUsers() {
+  const box = document.getElementById('existingUsers');
+  box.innerHTML = '';
+
+  const names = Object.keys(data.users).filter(n => data.users[n].size > 0);
+  if (names.length === 0) return;
+
+  const label = document.createElement('p');
+  label.className = 'muted small';
+  label.textContent = 'Ou continue como:';
+  box.appendChild(label);
+
+  const row = document.createElement('div');
+  row.className = 'chips';
+
+  names.forEach(n => {
+    const b = document.createElement('button');
+    b.className = 'chip';
+    b.type = 'button';
+    b.textContent = n;
+    b.addEventListener('click', () => login(n));
+    row.appendChild(b);
+  });
+
+  box.appendChild(row);
+}
+
+btnEnter.addEventListener('click', () => login(nameInput.value));
+nameInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') login(nameInput.value);
+});
+
+function updateUserBar() {
+  const bar = document.getElementById('userBar');
+  bar.innerHTML = '';
+
+  if (currentUser) {
+    bar.append('Você é ');
+    const strong = document.createElement('strong');
+    strong.textContent = currentUser;
+    bar.appendChild(strong);
+
+    const btn = document.createElement('button');
+    btn.className = 'link';
+    btn.type = 'button';
+    btn.textContent = 'trocar';
+    btn.addEventListener('click', openModal);
+    bar.appendChild(btn);
+  } else {
+    const btn = document.createElement('button');
+    btn.className = 'link';
+    btn.type = 'button';
+    btn.textContent = 'Entrar com seu nome';
+    btn.addEventListener('click', openModal);
+    bar.appendChild(btn);
+  }
+}
+
+/* =========================================================
+   AÇÕES
+   ========================================================= */
+document.getElementById('btnClearMine').addEventListener('click', () => {
+  if (!currentUser) { openModal(); return; }
+  if (mySet().size === 0) return;
+  if (!confirm('Limpar todas as suas seleções?')) return;
+
+  data.users[currentUser].clear();
+  saveData();
+  render();
+});
+
+
+/* =========================================================
+   INICIALIZAÇÃO
+   ========================================================= */
+(function init() {
+  loadData();
+  buildGrid();
+
+  const savedUser = localStorage.getItem(USER_KEY);
+  if (savedUser) {
+    currentUser = savedUser;
+    if (!data.users[currentUser]) data.users[currentUser] = new Set();
+  }
+
+  updateUserBar();
+  render();
+
+  if (!currentUser) openModal();
+})();
+</script>
+</body>
+</html>
