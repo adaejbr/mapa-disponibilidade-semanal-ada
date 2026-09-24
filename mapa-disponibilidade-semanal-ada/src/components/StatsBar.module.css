@@ -1,0 +1,22 @@
+.statRow {
+  display: flex;
+  gap: 24px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat span {
+  font-size: 1.9rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.stat small {
+  color: var(--muted);
+  font-size: 0.76rem;
+  margin-top: 5px;
+}

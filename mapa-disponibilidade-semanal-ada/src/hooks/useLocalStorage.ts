@@ -1,6 +1,6 @@
 /** Generic localStorage hook with TypeScript */
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
 /**
  * Hook for reading/writing a value from localStorage with TypeScript support

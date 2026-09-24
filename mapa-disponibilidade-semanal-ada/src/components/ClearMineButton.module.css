@@ -1,0 +1,25 @@
+.btn {
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 600;
+  padding: 9px 15px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--text);
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+.btn:hover {
+  background: #f1f5f9;
+}
+
+.btn.danger {
+  color: #b91c1c;
+  border-color: #fecaca;
+}
+
+.btn.danger:hover {
+  background: #fef2f2;
+}

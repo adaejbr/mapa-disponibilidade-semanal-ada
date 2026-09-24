@@ -1,0 +1,50 @@
+.wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.statsSection {
+  margin-top: 18px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 640px) {
+  .stats {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+.hint {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-top: 12px;
+}

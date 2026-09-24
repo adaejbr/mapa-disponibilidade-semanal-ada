@@ -1,0 +1,41 @@
+.best h3 {
+  margin: 0 0 10px;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.best ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.best li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.86rem;
+  padding: 7px 12px;
+  background: #f8fafc;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+}
+
+.best li.muted {
+  color: var(--muted);
+  justify-content: flex-start;
+}
+
+.pill {
+  font-size: 0.74rem;
+  font-weight: 700;
+  background: #dcfce7;
+  color: #166534;
+  padding: 3px 9px;
+  border-radius: 999px;
+}

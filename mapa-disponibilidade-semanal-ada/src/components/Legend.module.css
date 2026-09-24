@@ -1,0 +1,21 @@
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.legendBar {
+  width: 170px;
+  height: 10px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    hsl(142 40% 93%) 0%,
+    hsl(142 55% 78%) 35%,
+    hsl(142 70% 57%) 70%,
+    hsl(142 82% 37%) 100%
+  );
+  border: 1px solid rgba(15, 23, 42, 0.06);
+}

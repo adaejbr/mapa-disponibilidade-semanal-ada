@@ -1,0 +1,41 @@
+.gridScroll {
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.calendar {
+  display: grid;
+  grid-template-columns: 58px repeat(7, minmax(0, 1fr));
+  gap: 4px;
+  min-width: 660px;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-y;
+}
+
+.corner {
+  /* empty top-left corner */
+}
+
+.dayHead {
+  text-align: center;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 6px 0 8px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 2px;
+}
+
+.time {
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 8px;
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}

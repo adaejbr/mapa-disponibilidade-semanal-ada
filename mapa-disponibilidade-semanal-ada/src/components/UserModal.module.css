@@ -1,0 +1,116 @@
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modalCard {
+  background: #fff;
+  border-radius: 18px;
+  padding: 28px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.28);
+  animation: pop 0.18s ease-out;
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0.96);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.modalCard h2 {
+  margin: 0 0 6px;
+  font-size: 1.2rem;
+  letter-spacing: -0.02em;
+}
+
+.modalCard p {
+  margin: 0 0 18px;
+  color: var(--muted);
+  font-size: 0.87rem;
+}
+
+.modalCard input {
+  width: 100%;
+  font: inherit;
+  font-size: 0.95rem;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: #f8fafc;
+  outline: none;
+  transition: 0.15s;
+}
+
+.modalCard input:focus {
+  border-color: var(--accent);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+}
+
+.btn {
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px;
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 600;
+  border-radius: 10px;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+.btn:hover {
+  background: #0369a1;
+  border-color: #0369a1;
+}
+
+.existingUsers {
+  margin-top: 18px;
+}
+
+.mutedSmall {
+  color: var(--muted);
+  font-size: 0.78rem;
+  margin: 18px 0 8px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.chip {
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 6px 13px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: #fff;
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+.chip:hover {
+  background: #e0f2fe;
+  border-color: #7dd3fc;
+  color: #0369a1;
+}

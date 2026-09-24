@@ -1,0 +1,29 @@
+.cell {
+  height: 34px;
+  border-radius: 7px;
+  border: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.12s ease, box-shadow 0.12s ease;
+  touch-action: none;
+  background: var(--empty);
+  color: #14532d;
+}
+
+.cell:hover {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.mine {
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+.num {
+  /* count number display */
+}
