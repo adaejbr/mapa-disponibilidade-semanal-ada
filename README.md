@@ -1,0 +1,1 @@
+# mapa-disponibilidade-semanal-ada
