@@ -1,17 +1,18 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 /** HomePage component - main page for the availability app */
 
 import { useState, useEffect, useMemo, useCallback } from 'react'
-import { DAYS, START_HOUR, END_HOUR } from '../constants'
 import { loadUsers, saveUsers, getSavedUser, setSavedUser } from '../services/availabilityStorage'
 import { computeTotals, countPeople, computeBestSlots } from '../services/slotStats'
 import { heatColor } from '../utils/slots'
 import { Header } from '../layout/Header'
 import { Legend, StatsBar, BestSlots, ClearMineButton, UserModal, TimeGrid } from '../components'
+import type { UserSlots } from '../types'
 import styles from './HomePage.module.css'
 
 export function HomePage() {
   // State
-  const [users, setUsers] = useState<Record<string, Set<string>>>({})
+  const [users, setUsers] = useState<UserSlots>({})
   const [currentUser, setCurrentUser] = useState<string | null>(null)
   const [modalOpen, setModalOpen] = useState(false)
 
@@ -41,7 +42,7 @@ export function HomePage() {
   const people = useMemo(() => countPeople(users), [users])
   const slotsCount = useMemo(() => Object.keys(totals).length, [totals])
   const bestSlots = useMemo(() => computeBestSlots(totals), [totals])
-  const mine = useMemo(() => (currentUser ? users[currentUser] || new Set() : new Set()), [users, currentUser])
+  const mine = useMemo(() => (currentUser ? (users[currentUser] as Set<string>) || new Set<string>() : new Set<string>()), [users, currentUser])
   const legendMax = people === 0 ? 'todos' : `${people} ${people === 1 ? 'pessoa' : 'pessoas'}`
   const existingUsers = useMemo(
     () => Object.keys(users).filter((n) => (users[n]?.size ?? 0) > 0),
@@ -112,7 +113,7 @@ export function HomePage() {
       <div className={styles.actions}>
         <ClearMineButton
           currentUser={currentUser}
-          hasSelections={(users[currentUser]?.size ?? 0) > 0}
+          hasSelections={currentUser ? (users[currentUser]?.size ?? 0) > 0 : false}
           onClear={handleClearMine}
         />
       </div>

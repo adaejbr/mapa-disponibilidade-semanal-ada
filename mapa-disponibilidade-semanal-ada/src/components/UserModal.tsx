@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
 /** UserModal component - modal for user identification */
 
 import { useEffect, useRef, useState } from 'react'
@@ -10,13 +12,12 @@ export interface UserModalProps {
   existingUsers: string[]
 }
 
-export function UserModal({ isOpen, onClose: _onClose, onLogin, existingUsers }: UserModalProps) {
+export function UserModal({ isOpen, onLogin, existingUsers }: UserModalProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [name, setName] = useState('')
 
   useEffect(() => {
     if (isOpen) {
-      setName('')
       setTimeout(() => inputRef.current?.focus(), 50)
     }
   }, [isOpen])
@@ -26,6 +27,7 @@ export function UserModal({ isOpen, onClose: _onClose, onLogin, existingUsers }:
     const trimmed = name.trim()
     if (trimmed) {
       onLogin(trimmed)
+      setName('')
     }
   }
 

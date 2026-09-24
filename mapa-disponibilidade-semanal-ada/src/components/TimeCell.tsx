@@ -9,8 +9,8 @@ export interface TimeCellProps {
   ratio: number
   isMine: boolean
   heatColor: (ratio: number) => string
-  onPointerDown: (e: React.PointerEvent<HTMLDivElement>) => void
-  onPointerMove: (e: React.PointerEvent<HTMLDivElement>) => void
+  onPointerDown: (_e: React.PointerEvent<HTMLDivElement>) => void
+  onPointerMove: (_e: React.PointerEvent<HTMLDivElement>) => void
   onPointerUp: () => void
   onPointerCancel: () => void
 }

@@ -9,8 +9,8 @@ export interface TimeGridProps {
   totals: Record<string, number>
   people: number
   mine: Set<string>
-  onCellChange: (key: string, add: boolean) => void
-  heatColor: (ratio: number) => string
+  onCellChange: (_key: string, _add: boolean) => void
+  heatColor: (_ratio: number) => string
 }
 
 export function TimeGrid({
@@ -29,8 +29,9 @@ export function TimeGrid({
 
   // Cleanup pointer capture on unmount
   useEffect(() => {
+    const grid = gridRef.current
     return () => {
-      if (draggingRef.current && gridRef.current) {
+      if (draggingRef.current && grid) {
         try {
           // Note: we can't easily release pointer capture here without the event
         } catch {
