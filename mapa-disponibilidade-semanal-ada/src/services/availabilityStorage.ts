@@ -1,14 +1,18 @@
-/** Storage service for availability data - ported from home.html */
+/** Storage service for availability data - using localForage for async storage */
 
 import { STORAGE_KEY, USER_KEY } from '../constants'
 import type { UserSlots } from '../types'
+import storage from './localForageConfig'
 
-/** Load users data from localStorage */
-export function loadUsers(): UserSlots {
+/** Load users data from IndexedDB */
+export async function loadUsers(): Promise<UserSlots> {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY)
+    const raw = await storage.getItem(STORAGE_KEY)
     if (!raw) return {}
-    const parsed = JSON.parse(raw)
+    
+    // LocalForage can store objects directly, but if it was stored as string we parse it
+    const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw
+    
     const users: UserSlots = {}
     for (const [name, arr] of Object.entries(parsed.users || {})) {
       users[name] = new Set(Array.isArray(arr) ? arr : [])
@@ -20,41 +24,41 @@ export function loadUsers(): UserSlots {
   }
 }
 
-/** Save users data to localStorage */
-export function saveUsers(users: UserSlots): void {
+/** Save users data to IndexedDB */
+export async function saveUsers(users: UserSlots): Promise<void> {
   const serializable: Record<string, string[]> = {}
   for (const [name, set] of Object.entries(users)) {
     serializable[name] = [...set]
   }
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ users: serializable }))
+    await storage.setItem(STORAGE_KEY, { users: serializable })
   } catch (e) {
     console.warn('Não foi possível salvar.', e)
   }
 }
 
 /** Get the saved current user name */
-export function getSavedUser(): string | null {
+export async function getSavedUser(): Promise<string | null> {
   try {
-    return localStorage.getItem(USER_KEY)
+    return await storage.getItem(USER_KEY)
   } catch {
     return null
   }
 }
 
 /** Save the current user name */
-export function setSavedUser(name: string): void {
+export async function setSavedUser(name: string): Promise<void> {
   try {
-    localStorage.setItem(USER_KEY, name)
+    await storage.setItem(USER_KEY, name)
   } catch {
     // ignore
   }
 }
 
 /** Clear the saved user */
-export function clearSavedUser(): void {
+export async function clearSavedUser(): Promise<void> {
   try {
-    localStorage.removeItem(USER_KEY)
+    await storage.removeItem(USER_KEY)
   } catch {
     // ignore
   }

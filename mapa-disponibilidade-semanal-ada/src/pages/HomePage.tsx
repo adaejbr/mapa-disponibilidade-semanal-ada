@@ -15,27 +15,39 @@ export function HomePage() {
   const [users, setUsers] = useState<UserSlots>({})
   const [currentUser, setCurrentUser] = useState<string | null>(null)
   const [modalOpen, setModalOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
   // Load initial data
   useEffect(() => {
-    const loadedUsers = loadUsers()
-    setUsers(loadedUsers)
+    async function init() {
+      try {
+        const loadedUsers = await loadUsers()
+        setUsers(loadedUsers)
 
-    const savedUser = getSavedUser()
-    if (savedUser) {
-      setCurrentUser(savedUser)
-      if (!loadedUsers[savedUser]) {
-        setUsers((prev) => ({ ...prev, [savedUser]: new Set() }))
+        const savedUser = await getSavedUser()
+        if (savedUser) {
+          setCurrentUser(savedUser)
+          if (!loadedUsers[savedUser]) {
+            setUsers((prev) => ({ ...prev, [savedUser]: new Set() }))
+          }
+        } else {
+          setModalOpen(true)
+        }
+      } catch (e) {
+        console.error('Erro ao inicializar dados:', e)
+      } finally {
+        setIsLoading(false)
       }
-    } else {
-      setModalOpen(true)
     }
+    init()
   }, [])
 
   // Save users whenever they change
   useEffect(() => {
-    saveUsers(users)
-  }, [users])
+    if (!isLoading) {
+      saveUsers(users)
+    }
+  }, [users, isLoading])
 
   // Derived state
   const totals = useMemo(() => computeTotals(users), [users])
@@ -51,7 +63,7 @@ export function HomePage() {
 
   // Handlers
   const handleLogin = useCallback(
-    (name: string) => {
+    async (name: string) => {
       const trimmed = name.trim()
       if (!trimmed) return
 
@@ -62,7 +74,7 @@ export function HomePage() {
         return prev
       })
       setCurrentUser(trimmed)
-      setSavedUser(trimmed)
+      await setSavedUser(trimmed)
       setModalOpen(false)
     },
     []
@@ -135,32 +147,38 @@ export function HomePage() {
 
   return (
     <div className={styles.wrap}>
-      <Header
-        currentUser={currentUser}
-        onLogin={handleOpenModal}
-        onSwitchUser={handleOpenModal}
-      />
+      {isLoading ? (
+        <div className={styles.loading}>Carregando disponibilidades...</div>
+      ) : (
+        <>
+          <Header
+            currentUser={currentUser}
+            onLogin={handleOpenModal}
+            onSwitchUser={handleOpenModal}
+          />
 
-      <section className={styles.card}>
-        {toolbar}
-        <TimeGrid
-          totals={totals}
-          people={people}
-          mine={mine}
-          onCellChange={handleCellChange}
-          heatColor={heatColor}
-        />
-        {hint}
-      </section>
+          <section className={styles.card}>
+            {toolbar}
+            <TimeGrid
+              totals={totals}
+              people={people}
+              mine={mine}
+              onCellChange={handleCellChange}
+              heatColor={heatColor}
+            />
+            {hint}
+          </section>
 
-      <section className={`${styles.card} ${styles.statsSection}`}>{stats}</section>
+          <section className={`${styles.card} ${styles.statsSection}`}>{stats}</section>
 
-      <UserModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onLogin={handleLogin}
-        existingUsers={existingUsers}
-      />
+          <UserModal
+            isOpen={modalOpen}
+            onClose={() => setModalOpen(false)}
+            onLogin={handleLogin}
+            existingUsers={existingUsers}
+          />
+        </>
+      )}
     </div>
   )
 }
