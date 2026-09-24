@@ -18,7 +18,7 @@ export function BestSlots({ bestSlots }: BestSlotsProps) {
             <li key={slot.key}>
               <span>{slot.label}</span>
               <span className="pill">
-                {slot.count} {slot.count === 1 ? 'pessoa' : 'pessoas'}
+                 - {slot.count} {slot.count === 1 ? 'pessoa' : 'pessoas'}
               </span>
             </li>
           ))

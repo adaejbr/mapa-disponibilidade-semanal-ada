@@ -7,7 +7,6 @@ export interface LegendProps {
 export function Legend({ legendMax }: LegendProps) {
   return (
     <div className="legend">
-      <span>0</span>
       <div className="legendBar" />
       <span id="legendMax">{legendMax}</span>
     </div>

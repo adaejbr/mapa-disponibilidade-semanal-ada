@@ -10,11 +10,11 @@ export function StatsBar({ people, slots }: StatsBarProps) {
     <div className="statRow">
       <div className="stat">
         <span>{people}</span>
-        <small>participantes</small>
+        <small> participantes</small>
       </div>
       <div className="stat">
         <span>{slots}</span>
-        <small>horários marcados</small>
+        <small> horários marcados</small>
       </div>
     </div>
   )
