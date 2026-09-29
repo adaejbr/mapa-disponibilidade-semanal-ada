@@ -1,5 +1,5 @@
 /** ClearMineButton component - button to clear current user's selections */
-
+import styles from './ClearMineButton.module.css'
 export interface ClearMineButtonProps {
   currentUser: string | null
   hasSelections: boolean
@@ -10,7 +10,7 @@ export function ClearMineButton({ currentUser, hasSelections, onClear }: ClearMi
   if (!currentUser || !hasSelections) return null
 
   return (
-    <button className="btn danger" type="button" onClick={onClear}>
+    <button className={styles.btn + ' ' + styles.danger} type="button" onClick={onClear}>
       Limpar minhas seleções
     </button>
   )

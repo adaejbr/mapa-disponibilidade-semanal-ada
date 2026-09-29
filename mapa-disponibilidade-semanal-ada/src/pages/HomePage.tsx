@@ -110,7 +110,6 @@ export function HomePage() {
       return
     }
     if ((users[currentUser]?.size ?? 0) === 0) return
-    if (!window.confirm('Limpar todas as suas seleções?')) return
 
     setUsers((prev) => ({
       ...prev,
