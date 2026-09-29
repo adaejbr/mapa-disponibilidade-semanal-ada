@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 /** HomePage component - main page for the availability app */
 
 import { useState, useEffect, useMemo, useCallback } from 'react'

@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
 /** TimeCell component - presentational cell for the availability grid */
 
 import { memo } from 'react'

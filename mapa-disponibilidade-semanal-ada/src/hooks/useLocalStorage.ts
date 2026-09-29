@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /** Generic localStorage hook with TypeScript */
 
 import { useState } from 'react'

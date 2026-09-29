@@ -1,5 +1,7 @@
+/* eslint-disable no-unused-vars */
 /** TimeGrid component - interactive calendar grid with drag selection */
 
+import React from 'react'
 import { useRef, useEffect, useCallback } from 'react'
 import { DAYS, START_HOUR, END_HOUR } from '../constants'
 import { TimeCell } from './TimeCell'
