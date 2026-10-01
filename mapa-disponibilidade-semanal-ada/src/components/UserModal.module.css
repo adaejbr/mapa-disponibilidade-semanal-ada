@@ -114,3 +114,33 @@
   border-color: #7dd3fc;
   color: #0369a1;
 }
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+.inputGroup label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.inputGroup select,
+.inputGroup input {
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.sectorTag {
+  font-size: 0.7rem;
+  opacity: 0.7;
+  margin-left: 4px;
+}

@@ -13,11 +13,33 @@
 
 .toolbar {
   display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 14px;
+  margin-bottom: 1rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.sectorControl {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+}
+
+.sectorControl label {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.sectorControl select {
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.4rem;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-card);
+  color: var(--text-main);
+  font-size: 0.9rem;
+  cursor: pointer;
 }
 
 .actions {

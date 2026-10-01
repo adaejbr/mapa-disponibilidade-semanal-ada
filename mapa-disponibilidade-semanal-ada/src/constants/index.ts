@@ -8,6 +8,17 @@ export const END_HOUR = 22 // exclusive
 export const STORAGE_KEY = 'agenda-disponibilidade-v1'
 export const USER_KEY = 'agenda-disponibilidade-user'
 
+export type Sector = 'Jurídico-Financeiro' | 'Comercial' | 'Recursos Humanos' | 'Projetos' | 'Marketing' | 'Presidência'
+
+export const SECTORS: Sector[] = [
+  'Jurídico-Financeiro',
+  'Comercial',
+  'Recursos Humanos',
+  'Projetos',
+  'Marketing',
+  'Presidência'
+]
+
 // Heat map configuration (matches home.html heatColor function)
 export const HEAT_CONFIG = {
   hue: 142,

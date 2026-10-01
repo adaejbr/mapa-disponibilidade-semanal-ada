@@ -10,12 +10,23 @@ export async function loadUsers(): Promise<UserSlots> {
     const raw = await storage.getItem(STORAGE_KEY)
     if (!raw) return {}
     
-    // LocalForage can store objects directly, but if it was stored as string we parse it
     const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw
     
     const users: UserSlots = {}
-    for (const [name, arr] of Object.entries(parsed.users || {})) {
-      users[name] = new Set(Array.isArray(arr) ? arr : [])
+    for (const [name, data] of Object.entries(parsed.users || {})) {
+      // Check if data is in the new format { sector, slots } or old format [slots]
+      if (data && typeof data === 'object' && 'sector' in data) {
+        users[name] = {
+          sector: data.sector,
+          slots: new Set(Array.isArray(data.slots) ? data.slots : [])
+        }
+      } else {
+        // Migration: fallback for old data format [slotKey, ...]
+        users[name] = {
+          sector: 'Projetos', // Default sector for old users
+          slots: new Set(Array.isArray(data) ? data : [])
+        }
+      }
     }
     return users
   } catch (e) {
@@ -26,9 +37,12 @@ export async function loadUsers(): Promise<UserSlots> {
 
 /** Save users data to IndexedDB */
 export async function saveUsers(users: UserSlots): Promise<void> {
-  const serializable: Record<string, string[]> = {}
-  for (const [name, set] of Object.entries(users)) {
-    serializable[name] = [...set]
+  const serializable: Record<string, { sector: string, slots: string[] }> = {}
+  for (const [name, userData] of Object.entries(users)) {
+    serializable[name] = {
+      sector: userData.sector,
+      slots: [...userData.slots]
+    }
   }
   try {
     await storage.setItem(STORAGE_KEY, { users: serializable })
