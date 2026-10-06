@@ -1,81 +1,71 @@
-/** Storage service for availability data - using localForage for async storage */
+﻿/** Storage service for availability data - using Firebase Firestore for global storage */
 
 import { STORAGE_KEY, USER_KEY } from '../constants'
 import { type Sector } from '../constants'
 import type { UserSlots } from '../types'
-import storage from './localForageConfig'
+import { db } from './firebaseConfig'
+import { doc, getDoc, setDoc } from 'firebase/firestore'
 
-/** Load users data from IndexedDB */
+/** Load users data from Firestore */
 export async function loadUsers(): Promise<UserSlots> {
   try {
-    const raw = await storage.getItem(STORAGE_KEY)
-    if (!raw) return {}
+    const docRef = doc(db, 'availability', STORAGE_KEY);
+    const docSnap = await getDoc(docRef);
     
-    const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw
+    if (!docSnap.exists()) return {};
     
-    const users: UserSlots = {}
-    for (const [name, data] of Object.entries(parsed.users || {})) {
-      // Check if data is in the new format { sector, slots } or old format [slots]
+    const parsed = docSnap.data();
+    const usersData = parsed?.users || {};
+    
+    const users: UserSlots = {};
+    for (const [name, data] of Object.entries(usersData)) {
       if (data && typeof data === 'object' && 'sector' in data) {
         const userData = data as { sector: Sector; slots: any[] };
         users[name] = {
           sector: userData.sector,
           slots: new Set(Array.isArray(userData.slots) ? userData.slots : [])
-        }
+        };
       } else {
-        // Migration: fallback for old data format [slotKey, ...]
         users[name] = {
-          sector: 'Projetos', // Default sector for old users
+          sector: 'Projetos',
           slots: new Set(Array.isArray(data) ? data : [])
-        }
+        };
       }
     }
-    return users
+    return users;
   } catch (e) {
-    console.warn('Não foi possível carregar os dados salvos.', e)
-    return {}
+    console.warn('Não foi possível carregar os dados do Firebase.', e);
+    return {};
   }
 }
 
-/** Save users data to IndexedDB */
+/** Save users data to Firestore */
 export async function saveUsers(users: UserSlots): Promise<void> {
-  const serializable: Record<string, { sector: string, slots: string[] }> = {}
+  const serializable: Record<string, { sector: string, slots: string[] }> = {};
   for (const [name, userData] of Object.entries(users)) {
     serializable[name] = {
       sector: userData.sector,
       slots: [...userData.slots]
-    }
+    };
   }
   try {
-    await storage.setItem(STORAGE_KEY, { users: serializable })
+    await setDoc(doc(db, 'availability', STORAGE_KEY), { users: serializable });
   } catch (e) {
-    console.warn('Não foi possível salvar.', e)
+    console.warn('Não foi possível salvar no Firebase.', e);
   }
 }
 
-/** Get the saved current user name */
+/** Get the saved current user name - Keeping this in localStorage for user preference */
 export async function getSavedUser(): Promise<string | null> {
-  try {
-    return await storage.getItem(USER_KEY)
-  } catch {
-    return null
-  }
+  return localStorage.getItem(USER_KEY);
 }
 
-/** Save the current user name */
+/** Save the current user name - Keeping this in localStorage for user preference */
 export async function setSavedUser(name: string): Promise<void> {
-  try {
-    await storage.setItem(USER_KEY, name)
-  } catch {
-    // ignore
-  }
+  localStorage.setItem(USER_KEY, name);
 }
 
-/** Clear the saved user */
+/** Clear the saved user - Keeping this in localStorage for user preference */
 export async function clearSavedUser(): Promise<void> {
-  try {
-    await storage.removeItem(USER_KEY)
-  } catch {
-    // ignore
-  }
+  localStorage.removeItem(USER_KEY);
 }
