@@ -57,7 +57,14 @@ export function TimeGrid({
       const target = e.currentTarget
       if (!target) return
 
-      e.preventDefault()
+      if (e.pointerType === 'touch') {
+        const isMarked = mine.has(key)
+        // If it's already marked, we want to remove it.
+        // If not, we add it.
+        onCellChange(key, !isMarked)
+        return
+      }
+
       try {
         target.setPointerCapture(e.pointerId)
       } catch {
@@ -71,7 +78,7 @@ export function TimeGrid({
       dragModeRef.current = !isMarked // if already marked, drag removes
       applyCell(key)
     },
-    [applyCell, mine]
+    [applyCell, mine, onCellChange]
   )
 
   const handlePointerMove = useCallback(

@@ -1,7 +1,27 @@
 .gridScroll {
   overflow-x: auto;
-  padding-bottom: 6px;
+  padding-bottom: 20px;
   -webkit-overflow-scrolling: touch;
+}
+
+.gridScroll::-webkit-scrollbar {
+  height: 16px;
+  display: block !important;
+}
+
+.gridScroll::-webkit-scrollbar-track {
+  background: var(--bg-card);
+  border-radius: 8px;
+}
+
+.gridScroll::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 8px;
+  border: 3px solid var(--bg-card);
+}
+
+.gridScroll::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
 }
 
 .calendar {
@@ -11,7 +31,7 @@
   min-width: 580px;
   user-select: none;
   -webkit-user-select: none;
-  touch-action: pan-y;
+  touch-action: auto;
 }
 
 .corner {
