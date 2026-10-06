@@ -1,6 +1,7 @@
 .wrap {
   max-width: 1080px;
   margin: 0 auto;
+  padding: 0 16px;
 }
 
 .card {
@@ -9,6 +10,12 @@
   border-radius: var(--radius);
   padding: 18px;
   box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+}
+
+@media (max-width: 640px) {
+  .card {
+    padding: 12px;
+  }
 }
 
 .toolbar {
@@ -20,11 +27,25 @@
   flex-wrap: wrap;
 }
 
+@media (max-width: 640px) {
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+}
+
 .sectorControl {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   font-weight: 500;
+}
+
+@media (max-width: 640px) {
+  .sectorControl {
+    justify-content: space-between;
+  }
 }
 
 .sectorControl label {
@@ -46,6 +67,12 @@
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+}
+
+@media (max-width: 640px) {
+  .actions {
+    justify-content: center;
+  }
 }
 
 .statsSection {

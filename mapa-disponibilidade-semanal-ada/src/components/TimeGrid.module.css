@@ -1,13 +1,14 @@
 .gridScroll {
   overflow-x: auto;
   padding-bottom: 6px;
+  -webkit-overflow-scrolling: touch;
 }
 
 .calendar {
   display: grid;
   grid-template-columns: 58px repeat(7, minmax(0, 1fr));
   gap: 4px;
-  min-width: 660px;
+  min-width: 580px;
   user-select: none;
   -webkit-user-select: none;
   touch-action: pan-y;
