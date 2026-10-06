@@ -1,6 +1,7 @@
 /** Storage service for availability data - using localForage for async storage */
 
 import { STORAGE_KEY, USER_KEY } from '../constants'
+import { type Sector } from '../constants'
 import type { UserSlots } from '../types'
 import storage from './localForageConfig'
 
@@ -16,9 +17,10 @@ export async function loadUsers(): Promise<UserSlots> {
     for (const [name, data] of Object.entries(parsed.users || {})) {
       // Check if data is in the new format { sector, slots } or old format [slots]
       if (data && typeof data === 'object' && 'sector' in data) {
+        const userData = data as { sector: Sector; slots: any[] };
         users[name] = {
-          sector: data.sector,
-          slots: new Set(Array.isArray(data.slots) ? data.slots : [])
+          sector: userData.sector,
+          slots: new Set(Array.isArray(userData.slots) ? userData.slots : [])
         }
       } else {
         // Migration: fallback for old data format [slotKey, ...]

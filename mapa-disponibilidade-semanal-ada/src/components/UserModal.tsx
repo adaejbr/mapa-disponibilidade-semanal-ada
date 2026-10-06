@@ -14,7 +14,7 @@ export interface UserModalProps {
   existingUsers: { name: string; sector: Sector }[]
 }
 
-export function UserModal({ isOpen, onLogin, existingUsers }: UserModalProps) {
+export function UserModal({ isOpen, onLogin }: UserModalProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [name, setName] = useState('')
   const [sector, setSector] = useState<Sector>(SECTORS[0])

@@ -6,9 +6,10 @@ import { slotLabel } from '../utils/slots'
 /** Count how many people have marked each slot */
 export function computeTotals(users: UserSlots): SlotTotals {
   const totals: SlotTotals = {}
-  for (const set of Object.values(users)) {
-    if (set.size === 0) continue
-    for (const key of set) {
+  for (const userData of Object.values(users)) {
+    const slots = userData.slots
+    if (slots.size === 0) continue
+    for (const key of slots) {
       totals[key] = (totals[key] || 0) + 1
     }
   }
@@ -17,7 +18,7 @@ export function computeTotals(users: UserSlots): SlotTotals {
 
 /** Count how many users have at least one slot marked */
 export function countPeople(users: UserSlots): number {
-  return Object.values(users).filter((set) => set.size > 0).length
+  return Object.values(users).filter((userData) => userData.slots.size > 0).length
 }
 
 /** Get the best (most popular) slots, sorted by count desc then key asc */
