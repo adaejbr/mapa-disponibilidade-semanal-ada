@@ -147,6 +147,7 @@ export function HomePage() {
   // Card wrapper content
   const toolbar = (
     <div className={styles.toolbar}>
+      <title>Mapa de Disponibilidade - ADA EJ</title>
       <div className={styles.sectorControl}>
         <label htmlFor="sectorSelect">Setor:</label>
         <select 

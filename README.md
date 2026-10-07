@@ -9,7 +9,7 @@ O objetivo principal desta ferramenta é eliminar a troca excessiva de mensagens
 ## 🚀 Como Funciona
 
 1.  **Registro de Disponibilidade**: Cada assessor acessa a aplicação e marca no grid de horários os períodos em que está livre durante a semana.
-2.  **Armazenamento Local**: As informações são salvas de forma persistente, permitindo que o usuário retorne e edite seus horários sem perder os dados.
+2.  **Armazenamento em Nuvem**: As informações são salvas no Firebase Firestore, permitindo que as disponibilidades de todos os membros sejam sincronizadas e visualizadas em tempo real por qualquer pessoa com acesso à aplicação.
 3.  **Cálculo de Slots**: O sistema analisa a intersecção de disponibilidades de todos os usuários cadastrados.
 4.  **Visualização de Estatísticas**: A aplicação destaca os melhores horários para reuniões, facilitando a tomada de decisão do gestor ou do time.
 
@@ -24,7 +24,7 @@ A aplicação está hospedada no GitHub Pages e pode ser acessada através do li
 - **React** (Frontend)
 - **TypeScript** (Tipagem estática)
 - **Vite** (Build tool)
-- **LocalForage** (Armazenamento offline/local)
+- **Firebase Firestore** (Banco de dados NoSQL em nuvem)
 - **CSS Modules** (Estilização)
 
 ## 💻 Como executar localmente
