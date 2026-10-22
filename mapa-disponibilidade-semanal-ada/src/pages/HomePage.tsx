@@ -195,9 +195,10 @@ export function HomePage() {
               totals={totals}
               people={people}
               mine={mine}
-              onCellChange={handleCellChange}
-              heatColor={heatColor}
-            />
+                          sectorUsers={sectorUsers}
+                          onCellChange={handleCellChange}
+                          heatColor={heatColor}
+                        />
           </section>
 
           <section className={`${styles.card} ${styles.statsSection}`}>{stats}</section>

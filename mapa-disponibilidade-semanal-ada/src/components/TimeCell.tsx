@@ -15,6 +15,8 @@ export interface TimeCellProps {
   onPointerMove: (_e: React.PointerEvent<HTMLDivElement>) => void
   onPointerUp: () => void
   onPointerCancel: () => void
+  onMouseEnter: (_e: React.MouseEvent<HTMLDivElement>) => void
+  onMouseLeave: () => void
 }
 
 const TimeCellComponent = memo(function TimeCell({
@@ -27,6 +29,8 @@ const TimeCellComponent = memo(function TimeCell({
   onPointerMove,
   onPointerUp,
   onPointerCancel,
+  onMouseEnter,
+  onMouseLeave,
 }: TimeCellProps) {
   if (count === 0) {
     return (
@@ -40,34 +44,38 @@ const TimeCellComponent = memo(function TimeCell({
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerCancel}
+          onMouseEnter={onMouseEnter}
+          onMouseLeave={onMouseLeave}
+        >
+          <span className={styles.num} />
+        </div>
+      )
+    }
+
+    const bgColor = heatColor(ratio)
+    const textColor = ratio > 0.7 ? '#ffffff' : '#14532d'
+
+    return (
+      <div
+        className={`${styles.cell} ${isMine ? styles.mine : ''}`}
+        data-key={slotKey}
+        role="gridcell"
+        tabIndex={0}
+        style={{
+          background: bgColor,
+          color: textColor,
+          borderColor: 'var(--line)',
+        }}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerCancel}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
       >
-        <span className={styles.num} />
+        <span className={styles.num}>{count}</span>
       </div>
     )
-  }
-
-  const bgColor = heatColor(ratio)
-  const textColor = ratio > 0.7 ? '#ffffff' : '#14532d'
-
-  return (
-    <div
-      className={`${styles.cell} ${isMine ? styles.mine : ''}`}
-      data-key={slotKey}
-      role="gridcell"
-      tabIndex={0}
-      style={{
-        background: bgColor,
-        color: textColor,
-        borderColor: 'var(--line)',
-      }}
-      onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
-      onPointerUp={onPointerUp}
-      onPointerCancel={onPointerCancel}
-    >
-      <span className={styles.num}>{count}</span>
-    </div>
-  )
 })
 
 TimeCellComponent.displayName = 'TimeCell'
