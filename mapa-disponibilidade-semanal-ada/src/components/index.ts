@@ -20,3 +20,6 @@ export type { TimeGridProps } from './TimeGrid'
 
 export { TimeCell } from './TimeCell'
 export type { TimeCellProps } from './TimeCell'
+
+export { Tooltip } from './Tooltip'
+export type { TooltipProps } from './Tooltip'
